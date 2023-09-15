@@ -1,0 +1,64 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           dist-sys-challenge-haskell
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/mattysmith22/dist-sys-challenge-haskell#readme>
+homepage:       https://github.com/mattysmith22/dist-sys-challenge-haskell#readme
+bug-reports:    https://github.com/mattysmith22/dist-sys-challenge-haskell/issues
+author:         Matthew Smith
+maintainer:     Matthew Smith
+copyright:      2023 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/mattysmith22/dist-sys-challenge-haskell
+
+library
+  exposed-modules:
+      Maelstrom
+  other-modules:
+      Paths_dist_sys_challenge_haskell
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+  default-language: Haskell2010
+
+executable challenge-1
+  main-is: Main.hs
+  other-modules:
+      Paths_dist_sys_challenge_haskell
+  hs-source-dirs:
+      challenge-1
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , dist-sys-challenge-haskell
+  default-language: Haskell2010
+
+test-suite dist-sys-challenge-haskell-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_dist_sys_challenge_haskell
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , dist-sys-challenge-haskell
+  default-language: Haskell2010

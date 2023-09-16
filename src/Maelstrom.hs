@@ -13,7 +13,7 @@ module Maelstrom
     , ensureMessageType
 
     , Handler
-    , makeHandler
+    , makeEndpoint
     , sendMessage
     , sendMessage'
     , maelstromMain
@@ -157,6 +157,9 @@ ensureMessageType expectedType o = do
 type Handler state a
     = StateT (MaelstromState state) IO a
 
+type Endpoint state
+    = Value -> Parser (Node -> Handler state ())
+
 repeatedly
     :: Monad m 
     => (a -> m a)
@@ -197,17 +200,17 @@ instance FromJSON MessageIdOnly where
     parseJSON = fmap (fmap MessageIdOnly) $ withObject "MessageIdOnly"
         $ \o -> o .: "msg_id"
 
-makeHandler :: FromJSON message
+makeEndpoint :: FromJSON message
     => (message -> Node -> Handler state b)
     -> Value
     -> Parser (Node -> Handler state b)
-makeHandler handler = fmap handler <$> parseJSON
+makeEndpoint handler = fmap handler <$> parseJSON
 
 maelstromMain
     :: IO state -- ^ Function to init
-    -> (Value -> Parser (Node -> Handler state ())) -- ^ Handler implementation
+    -> [Endpoint state]-- ^ Endpoint implementations
     -> IO ()
-maelstromMain initHandler handler = repeatedly
+maelstromMain serverInit endpoints = repeatedly
     (\case
         Nothing -> do
             msg <- readMessage 
@@ -233,7 +236,7 @@ maelstromMain initHandler handler = repeatedly
                                 , msgDest = msgSource msg
                                 }
                             return Nothing
-                    catch (initHandler >>= initServer) exceptionHandler
+                    catch (serverInit >>= initServer) exceptionHandler
                 Nothing -> return Nothing
         (Just maelState) -> do
             let handleUnknownMessage = \MessageIdOnly{..} sender -> sendMessage' sender ErrorResponse
@@ -243,7 +246,7 @@ maelstromMain initHandler handler = repeatedly
                     }
             
             msg <- readMessage
-            case parseMaybe (\x -> handler x <|> makeHandler handleUnknownMessage x) (msgBody msg) of
+            case parseMaybe (\x -> asum (fmap ($ x) endpoints) <|> makeEndpoint handleUnknownMessage x) (msgBody msg) of
                 (Just x) -> Just <$> execStateT (x $ msgSource msg) maelState
                 Nothing -> pure $ Just maelState)
     Nothing

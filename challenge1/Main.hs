@@ -42,4 +42,4 @@ handleEcho EchoRequest{..} sender = let
 main :: IO ()
 main = maelstromMain
     (return ())
-    (makeHandler handleEcho)
+    [makeEndpoint handleEcho]

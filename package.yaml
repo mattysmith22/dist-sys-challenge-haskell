@@ -21,6 +21,11 @@ description:         Please see the README on GitHub at <https://github.com/matt
 dependencies:
 - base >= 4.7 && < 5
 - aeson
+- text
+- bytestring
+- bimap
+- exceptions
+- mtl
 
 ghc-options:
 - -Wall
@@ -32,14 +37,15 @@ ghc-options:
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
+- -XRecordWildCards
 
 library:
   source-dirs: src
 
 executables:
-  challenge-1:
+  challenge1:
     main:                Main.hs
-    source-dirs:         challenge-1
+    source-dirs:         challenge1
     ghc-options:
     - -threaded
     - -rtsopts
